@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+out/
+*.egg-info/
+dist/
+build/
+.DS_Store
+smoke-logs/
+*.wav
+*.mp3
+*.m4a
+*.mp4
+*.webm
+.tmp/
