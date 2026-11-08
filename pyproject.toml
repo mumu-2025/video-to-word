@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "video-to-word"
+version = "0.1.0"
+description = "Multi-site video URL → audio → transcript → Word (.docx) for agents"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "mumu-2025" }]
+dependencies = [
+  "python-docx>=1.1.0",
+]
+
+[project.optional-dependencies]
+funasr = ["funasr>=1.1.0", "torch", "torchaudio", "modelscope"]
+faster-whisper = ["faster-whisper>=1.0.0"]
+all = ["video-to-word[funasr,faster-whisper]"]
+
+[project.scripts]
+video-to-word = "video_to_word.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["video_to_word*"]

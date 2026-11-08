@@ -1,0 +1,12 @@
+# Core (always)
+python-docx>=1.1.0
+
+# System tools (install separately, not via pip):
+#   - yt-dlp  (https://github.com/yt-dlp/yt-dlp)
+#   - ffmpeg  (https://ffmpeg.org)
+
+# ASR engines — install the one you need into a dedicated venv:
+# FunASR (default, strong Chinese):
+#   pip install funasr torch torchaudio modelscope
+# faster-whisper (lighter / multilingual):
+#   pip install faster-whisper
