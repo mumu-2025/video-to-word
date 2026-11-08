@@ -8,7 +8,8 @@
 ## 功能
 
 - **多站点**：不绑死 YouTube；走 [yt-dlp](https://github.com/yt-dlp/yt-dlp) 提取器（本机可用 `yt-dlp --list-extractors` 查看完整列表，通常 1800+）。
-- **字幕优先**：有官方/自动字幕时先用字幕，没有再 ASR。
+- **默认直接语音识别（ASR）**：不抽字幕、不下载字幕（更快、口径统一）。
+- **字幕为显式 opt-in**：需要时加 `--prefer-subs` / `--use-subs`。
 - **ASR**：默认 **FunASR**（中文强）；可选 **faster-whisper**。
 - **输出**：`{标题}-逐字转录.docx`，尽量保留视频原标题（含中文）。
 - **Agent Skill**：`skill/SKILL.md` 可拷贝到 `~/.agents/skills/video-to-word/`。
@@ -95,8 +96,14 @@ ln -sfn ~/.agents/skills/video-to-word ~/.cursor/skills/video-to-word
 # 本地文件
 ./bin/video-to-word --file ./talk.mp4 --out ./out --engine funasr
 
-# 强制 ASR / 换引擎
-./bin/video-to-word --url '…' --force-asr --engine faster-whisper --fw-model base
+# 默认即 ASR（不抽字幕）；换引擎示例
+./bin/video-to-word --url '…' --engine faster-whisper --fw-model base
+
+# 显式使用字幕（opt-in）
+./bin/video-to-word --url '…' --prefer-subs
+
+# 与 --prefer-subs 联用：有字幕仍强制 ASR
+./bin/video-to-word --url '…' --prefer-subs --force-asr
 
 # 保留音频
 ./bin/video-to-word --url '…' --keep-audio
@@ -116,12 +123,12 @@ PYTHONPATH=. python3 -m video_to_word --help
 ```
 URL / local file
     │
-    ├─(URL)── yt-dlp  (--write-sub / --write-auto-sub 优先)
-    │            └─ -x 抽音频 (+ ffmpeg 16k mono wav)
+    ├─(URL)── yt-dlp -x 抽音频 (+ ffmpeg 16k mono wav)
+    │            └─(仅 --prefer-subs) 才尝试 --write-sub / --write-auto-sub
     ├─(file)─ ffmpeg 抽音频（若已是音频则直用）
     │
-    ├─ 有可用字幕 ──► 清洗段落
-    └─ 无字幕 ──────► FunASR 或 faster-whisper
+    ├─ 默认 ──────────────────► FunASR 或 faster-whisper → 清洗段落
+    └─(--prefer-subs 且有字幕)► 清洗字幕段落（可用 --force-asr 仍走 ASR）
                          │
                          ▼
                    python-docx  →  {标题}-逐字转录.docx
@@ -155,7 +162,7 @@ URL / local file
 
 | 站点 | 样例 | 结果 | 路径 |
 |------|------|------|------|
-| YouTube | `jNQXAC9IVRw`《Me at the zoo》19s | ✅ 字幕路径成功；✅ `--force-asr` + faster-whisper tiny 成功 | URL→docx |
+| YouTube | `jNQXAC9IVRw`《Me at the zoo》19s | ✅ 默认 ASR（faster-whisper tiny）；✅ `--prefer-subs` 字幕路径 | URL→docx |
 | Internet Archive | `testmp3testfile` ~12s | ✅ faster-whisper 转写成功 | URL→docx |
 | 本地 wav | `--file` | ✅ | file→docx |
 | Bilibili | 公开 BV | ❌ HTTP 412 Precondition Failed（机房出口/风控，非破解范围） | — |

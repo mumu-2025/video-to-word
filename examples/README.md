@@ -1,7 +1,7 @@
 # Examples
 
 ```bash
-# YouTube short / any yt-dlp URL
+# YouTube / any yt-dlp URL — default = ASR only (no subtitle fetch)
 video-to-word --url 'https://www.youtube.com/watch?v=XXXX' --out ./out
 
 # Bilibili
@@ -10,8 +10,11 @@ video-to-word --url 'https://www.bilibili.com/video/BVxxxx' --out ./out --langua
 # Local file
 video-to-word --file ./sample.mp4 --out ./out --engine faster-whisper --language auto
 
-# Force ASR even if subs exist
-video-to-word --url '…' --force-asr --engine funasr
+# Opt-in: try subtitles first
+video-to-word --url '…' --prefer-subs
+
+# With --prefer-subs, still force ASR if you want both downloaded but ASR text
+video-to-word --url '…' --prefer-subs --force-asr --engine funasr
 
 # Keep temp audio
 video-to-word --url '…' --keep-audio

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1 — 2026-11-08
+
+- **Breaking default**: pipeline is **ASR-only by default** — no subtitle download/extract unless the user opts in with `--prefer-subs` / `--use-subs`.
+- Keep `--no-subs` (noop/default clarity) and `--force-asr` (with `--prefer-subs`: still ASR even if subs found).
+- Docs / skill / examples updated: 默认直接语音识别，不抽字幕.
+
 ## 0.1.0 — 2026-11-08
 
 - First release: multi-site `URL|file → audio → transcript → Word (.docx)`.

@@ -1,9 +1,9 @@
 ---
 name: video-to-word
-description: Turn a video URL or local media file from many sites (YouTube, Bilibili, Vimeo, X/Twitter, etc. via yt-dlp) into a cleaned Chinese/English transcript Word (.docx). Use whenever the user pastes a video link and asks for 转写、逐字稿、字幕整理、Word、docx、transcript, or audio-to-text from that video.
+description: Turn a video URL or local media file from many sites (YouTube, Bilibili, Vimeo, X/Twitter, etc. via yt-dlp) into a cleaned Chinese/English transcript Word (.docx) via speech recognition. Use whenever the user pastes a video link and asks for 转写、逐字稿、语音识别、Word、docx、transcript, or audio-to-text from that video.
 license: MIT
 metadata:
-  version: "0.1.0"
+  version: "0.1.1"
   tags:
     - transcript
     - video
@@ -37,23 +37,26 @@ metadata:
 ## Steps
 
 1. **Confirm intent**: user wants transcript/Word from a URL or file. Note language (`zh` default, or `en`/`auto`).
-2. **Prefer subtitles first** (faster, often cleaner):
+2. **Default = ASR only（默认直接语音识别，不抽字幕）**:
    ```bash
    cd /workspace/repos/video-to-word
    ./bin/video-to-word --url 'URL' --out ./out --language zh
    ```
-   The CLI tries `yt-dlp --write-sub --write-auto-sub` before ASR.
-3. **If no usable subs**, ASR runs automatically:
+   Do **not** pass subtitle flags unless the user explicitly asks for subtitles.
+3. **ASR engines**:
    - Default: `--engine funasr` (Chinese-strong)
    - Lighter / multilingual: `--engine faster-whisper --fw-model small`
-   - Force ASR: `--force-asr` or `--no-subs`
-4. **Local file**:
+4. **Subtitles are opt-in only** (user must ask):
+   - `--prefer-subs` / `--use-subs`: try yt-dlp official/auto subs first
+   - `--force-asr` with `--prefer-subs`: still run ASR even if subs found
+   - `--no-subs`: explicit ASR-only (already the default)
+5. **Local file**:
    ```bash
    ./bin/video-to-word --file '/path/to/video.mp4' --out ./out --engine funasr
    ```
-5. **Return** the `.docx` path to the user. Title keeps the original (often Chinese) metadata title when yt-dlp provides it.
-6. **Temp media**: deleted by default. Only pass `--keep-audio` if the user asked to keep audio.
-7. **Delivery (optional, configurable)**: if chat download fails and the user has a preferred delivery channel (e.g. QQ / email on file), offer that channel — **do not hard-code or send** without an explicit ask this turn.
+6. **Return** the `.docx` path to the user. Title keeps the original (often Chinese) metadata title when yt-dlp provides it.
+7. **Temp media**: deleted by default. Only pass `--keep-audio` if the user asked to keep audio.
+8. **Delivery (optional, configurable)**: if chat download fails and the user has a preferred delivery channel (e.g. QQ / email on file), offer that channel — **do not hard-code or send** without an explicit ask this turn.
 
 ## Failure handling
 
