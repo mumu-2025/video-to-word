@@ -30,7 +30,7 @@ def run_pipeline(
     engine: str = "funasr",
     language: str = "zh",
     keep_audio: bool = False,
-    prefer_subs: bool = True,
+    prefer_subs: bool = False,
     fw_model: str = "small",
     force_asr: bool = False,
 ) -> PipelineResult:

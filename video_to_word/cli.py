@@ -23,7 +23,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--engine",
         default="funasr",
         choices=["funasr", "faster-whisper", "whisper", "fw"],
-        help="ASR engine when subtitles unavailable (default: funasr)",
+        help="ASR engine (default: funasr). Default pipeline always runs ASR; subtitles are opt-in.",
     )
     p.add_argument(
         "--language",
@@ -36,14 +36,21 @@ def build_parser() -> argparse.ArgumentParser:
         help="Keep extracted audio under out/audio/ (default: delete temp media)",
     )
     p.add_argument(
+        "--prefer-subs",
+        "--use-subs",
+        dest="prefer_subs",
+        action="store_true",
+        help="Opt-in: try yt-dlp official/auto subtitles first; if usable, skip ASR. Default is ASR-only (no subtitle fetch).",
+    )
+    p.add_argument(
         "--no-subs",
         action="store_true",
-        help="Do not try yt-dlp subtitles; always run ASR",
+        help="Explicit ASR-only (default behavior; kept for clarity). Ignores --prefer-subs.",
     )
     p.add_argument(
         "--force-asr",
         action="store_true",
-        help="Run ASR even if subtitles were found",
+        help="When used with --prefer-subs, still run ASR even if subtitles were found.",
     )
     p.add_argument(
         "--fw-model",
@@ -75,6 +82,7 @@ def main(argv: list[str] | None = None) -> int:
 
     from video_to_word.pipeline import run_pipeline
 
+    prefer_subs = bool(args.prefer_subs) and not bool(args.no_subs)
     result = run_pipeline(
         url=args.url,
         file=args.file,
@@ -82,7 +90,7 @@ def main(argv: list[str] | None = None) -> int:
         engine=args.engine,
         language=args.language,
         keep_audio=args.keep_audio,
-        prefer_subs=not args.no_subs,
+        prefer_subs=prefer_subs,
         fw_model=args.fw_model,
         force_asr=args.force_asr,
     )

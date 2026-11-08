@@ -88,11 +88,11 @@ def _vtt_or_srt_to_text(path: Path) -> str:
 def download_url(
     url: str,
     *,
-    prefer_subs: bool = True,
+    prefer_subs: bool = False,
     language: str = "auto",
     work_dir: Optional[Path] = None,
 ) -> MediaInfo:
-    """Download best audio (and try subs) via yt-dlp. Works for any supported extractor."""
+    """Download best audio via yt-dlp. Subtitles only when prefer_subs=True (opt-in)."""
     yt = _yt_dlp()
     work = Path(work_dir) if work_dir else Path(tempfile.mkdtemp(prefix="v2w-"))
     work.mkdir(parents=True, exist_ok=True)
